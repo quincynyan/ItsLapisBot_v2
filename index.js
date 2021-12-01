@@ -9,8 +9,9 @@ const r = new snoowrap(token);
 
 
 
-const csv = require('csv');
-//const db = require('db')
+const csv = require('csv-parser');
+const fs = require('fs')
+//const db = require('@replit/database')
 //const keep_alive = require('./keep_alive')
 
 function clean_string(raw_string) {
@@ -32,33 +33,31 @@ function setCharAt(str,index,chr) {
 }
 
 
+class RedditBot{
+    constructor(filename){
+        this.response_list = []
 
-/*
-class RedditBot:
-    def __init__(self, filename):
-        self.response_list = []
-
-        if len(db) == 0:
-            with open(filename) as csv_file:
-                csv_reader = csv.reader(csv_file, delimiter=",")
-                for row in csv_reader:
-                    self.response_list.append({
-                        'phrase': clean_string(row[0]), 
-                        'reply': row[1]
-                    })
-            db['response_list'] = self.response_list
-        else:
-            print("Pulling from DB")
-            self.response_list = db['response_list']
-
-    def find_match(self, comment):
-        for i, dictionary in enumerate(self.response_list):
+        //if (db.length == 0){
+            fs.createReadStream('response_list.csv')
+                .pipe(csv(['phrase', 'reply1', 'reply2', 'reply3', 'reply4']))
+                .on('data', (data) => this.response_list.push(data))
+                .on('end', () => {
+                    console.log(this.response_list);
+                });
+        //  db['response_list'] = this.response_list
+        //} else{
+        //    console.log("Pulling from DB")
+        //    this.response_list = db['response_list']
+        //}
+    }
+    /*def find_match(comment):
+        for i, dictionary in enumerate(this.response_list):
             if dictionary['phrase'] in clean_string(comment.body):
-                if self.cooled_down(i):
-                    self.make_reply(i, comment)
+                if this.cooled_down(i):
+                    this.make_reply(i, comment)
     
-    def cooled_down(self, i):
-        dictionary = self.response_list[i]
+    def cooled_down(i):
+        dictionary = this.response_list[i]
         if 'last_posted' not in dictionary.keys():
             # Means we have never posted on this phrase!
             return True
@@ -74,8 +73,8 @@ class RedditBot:
         
         return False
 
-    def make_reply(self, i, comment):
-        dictionary = self.response_list[i]
+    def make_reply(i, comment):
+        dictionary = this.response_list[i]
         try:
             comment.reply(dictionary['reply'])
             print(comment.body)
@@ -87,16 +86,19 @@ class RedditBot:
             print(e)
 
         now = datetime.now()
-        self.response_list[i]['last_posted'] = now.timestamp()
-        db['response_list'] = self.response_list
-
+        this.response_list[i]['last_posted'] = now.timestamp()
+        db['response_list'] = this.response_list*/
+}
+/*
 # Warning clears all your posted times!
 # Use if you want to changes phrases replies
 #db.clear()
 keep_alive()
-bot = RedditBot("pairs.csv")
+bot = RedditBot("response_list.csv")
 subreddit = reddit.subreddit("all")
 for comment in subreddit.stream.comments(skip_existing=True):
     bot.find_match(comment)
 
 */
+
+bot = new RedditBot("response_list.csv")

@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('path');
 const snoowrap = require('snoowrap');
 const token = require('./token.json');
 
@@ -11,9 +11,9 @@ const r = new snoowrap(token);
 
 
 const csv = require('csv-parser');
-const fs = require('fs')
-//const db = require('@replit/database')
-//const keep_alive = require('./keep_alive')
+const fs = require('fs');
+//const db = require('@replit/database');
+const keep_alive = require('./keep_alive.js');
 
 
 const nodeModulesPath = path.join(__dirname, "node_modules");
@@ -30,7 +30,7 @@ function installDeps() {
 
 if (!fs.existsSync(nodeModulesPath)) {
 	installDeps();
-	return;
+	//return;
 }
 
 function clean_string(raw_string) {
@@ -125,7 +125,7 @@ class RedditBot{
 // Warning clears all your posted times!
 // Use if you want to changes phrases replies
 //db.clear()
-//keep_alive()
+keep_alive.keep_alive()
 bot = new RedditBot("response_list.csv");
 subreddit = r.getSubreddit("all");
 for (i=0;i<subreddit.getNewComments();i++){

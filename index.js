@@ -1,5 +1,20 @@
+const path = require('path')
 const snoowrap = require('snoowrap');
 const token = require('./token.json');
+
+const r = new snoowrap(token);
+
+//subreddit = snoowrap.subreddit("")
+
+
+
+
+
+const csv = require('csv-parser');
+const fs = require('fs')
+//const db = require('@replit/database')
+//const keep_alive = require('./keep_alive')
+
 
 const nodeModulesPath = path.join(__dirname, "node_modules");
 
@@ -17,19 +32,6 @@ if (!fs.existsSync(nodeModulesPath)) {
 	installDeps();
 	return;
 }
-
-const r = new snoowrap(token);
-
-//subreddit = snoowrap.subreddit("")
-
-
-
-
-
-const csv = require('csv-parser');
-const fs = require('fs')
-//const db = require('@replit/database')
-//const keep_alive = require('./keep_alive')
 
 function clean_string(raw_string) {
 	A = "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890".split('');
@@ -100,7 +102,7 @@ class RedditBot{
     }
 
     make_reply(i, comment){
-        dictionary = this.response_list[i]
+        dictionary = this.response_list[i];
         try{
             setTimeout(function(){
                 x = getRndInteger(1, 4);
@@ -108,14 +110,14 @@ class RedditBot{
                 console.log(comment.body)
                 console.log(dictionary['phrase'])
                 console.log(dictionary['reply'+x])
-            }, 60 * 60 * 3)            
+            }, 60 * 60 * 3);
             // Might want to sleep after posting!
         }catch(e){
-            console.log(e)
+            console.log(e);
         }
 
-        now = datetime.now()
-        this.response_list[i]['last_posted'] = now.timestamp()
+        now = datetime.now();
+        this.response_list[i]['last_posted'] = now.timestamp();
         //db['response_list'] = this.response_list
     }
 }
@@ -124,10 +126,10 @@ class RedditBot{
 // Use if you want to changes phrases replies
 //db.clear()
 //keep_alive()
-bot = new RedditBot("response_list.csv")
-subreddit = snoowrap.getSubreddit("all")
+bot = new RedditBot("response_list.csv");
+subreddit = r.getSubreddit("all");
 for (i=0;i<subreddit.getNewComments();i++){
-    bot.find_match(comment)
+    bot.find_match(comment);
 }
 
 

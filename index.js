@@ -1,6 +1,23 @@
 const snoowrap = require('snoowrap');
 const token = require('./token.json');
 
+const nodeModulesPath = path.join(__dirname, "node_modules");
+
+function installDeps() {
+	console.log("Installing dependencies, please wait...");
+	execSync("npm install --only=prod", {
+		cwd: __dirname, 
+		stdio: [ null, null, null ]
+	});
+	console.log("Dependencies successfully installed!");
+	//powercord.pluginManager.remount(__dirname);
+}
+
+if (!fs.existsSync(nodeModulesPath)) {
+	installDeps();
+	return;
+}
+
 const r = new snoowrap(token);
 
 //subreddit = snoowrap.subreddit("")
@@ -32,6 +49,10 @@ function setCharAt(str,index,chr) {
     return str.substring(0,index) + chr + str.substring(index+1);
 }
 
+function getRndInteger(min, max) {
+    return Math.floor(Math.random() * (max - min + 1) ) + min;
+}
+
 
 class RedditBot{
     constructor(filename){
@@ -50,55 +71,64 @@ class RedditBot{
         //    this.response_list = db['response_list']
         //}
     }
-    /*def find_match(comment):
-        for i, dictionary in enumerate(this.response_list):
-            if dictionary['phrase'] in clean_string(comment.body):
-                if this.cooled_down(i):
-                    this.make_reply(i, comment)
+    find_match(comment){
+        for (i=0;i<this.response_list;i++)
+            if (clean_string(comment.body).includes(this.response_list[i]['phrase'])){
+                if (this.cooled_down(i)){
+                    this.make_reply(i, comment);
+                }
+            }
+    }
     
-    def cooled_down(i):
+    cooled_down(i){
         dictionary = this.response_list[i]
-        if 'last_posted' not in dictionary.keys():
-            # Means we have never posted on this phrase!
-            return True
-        else:
-            now = datetime.now()
-            duration = now - datetime.fromtimestamp(dictionary['last_posted'])
-            duration_seconds = duration.total_seconds()
-            hours = divmod(duration_seconds, 3600)[0]
-            if hours >= 24:
-                return True
-            else:
-                print(f"Couldn't post {dictionary['phrase']} Cool Down time: {24 - hours}")
-        
-        return False
+        if (!dictionary.keys().includes('last_posted')){
+            // Means we have never posted on this phrase!
+            return True;
+        } else{
+            now = datetime.now();
+            duration = now - datetime.fromtimestamp(dictionary['last_posted']);
+            duration_seconds = duration.total_seconds();
+            hours = divmod(duration_seconds, 3600)[0];
+            if (hours >= 24){
+                return True;
+            } else{
+                console.log("Couldn't post " + dictionary['phrase'] + "Cool Down time: " + 24 - hours);
+            }
+        }
+        return False;
+    }
 
-    def make_reply(i, comment):
+    make_reply(i, comment){
         dictionary = this.response_list[i]
-        try:
-            comment.reply(dictionary['reply'])
-            print(comment.body)
-            print(dictionary['phrase'])
-            print(dictionary['reply'])
-            # Might want to sleep after posting!
-            time.sleep(60 * 60 * 3)
-        except Exception as e:
-            print(e)
+        try{
+            setTimeout(function(){
+                x = getRndInteger(1, 4);
+                comment.reply(dictionary['reply'+x])
+                console.log(comment.body)
+                console.log(dictionary['phrase'])
+                console.log(dictionary['reply'+x])
+            }, 60 * 60 * 3)            
+            // Might want to sleep after posting!
+        }catch(e){
+            console.log(e)
+        }
 
         now = datetime.now()
         this.response_list[i]['last_posted'] = now.timestamp()
-        db['response_list'] = this.response_list*/
+        //db['response_list'] = this.response_list
+    }
 }
-/*
-# Warning clears all your posted times!
-# Use if you want to changes phrases replies
-#db.clear()
-keep_alive()
-bot = RedditBot("response_list.csv")
-subreddit = reddit.subreddit("all")
-for comment in subreddit.stream.comments(skip_existing=True):
-    bot.find_match(comment)
 
-*/
-
+// Warning clears all your posted times!
+// Use if you want to changes phrases replies
+//db.clear()
+//keep_alive()
 bot = new RedditBot("response_list.csv")
+subreddit = snoowrap.getSubreddit("all")
+for (i=0;i<subreddit.getNewComments();i++){
+    bot.find_match(comment)
+}
+
+
+

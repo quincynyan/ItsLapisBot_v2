@@ -8,5 +8,5 @@ function keep_alive(){
 	app.listen(8080);
 }
 
-module.exports = keep_alive();
+module.exports = keep_alive;
 require('./keep_alive.js');

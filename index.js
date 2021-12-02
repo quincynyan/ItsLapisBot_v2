@@ -125,7 +125,7 @@ class RedditBot{
 // Warning clears all your posted times!
 // Use if you want to changes phrases replies
 //db.clear()
-keep_alive.keep_alive()
+keep_alive()
 bot = new RedditBot("response_list.csv");
 subreddit = r.getSubreddit("all");
 for (i=0;i<subreddit.getNewComments();i++){

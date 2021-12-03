@@ -12,7 +12,8 @@ const r = new snoowrap(token);
 
 const csv = require('csv-parser');
 const fs = require('fs');
-//const db = require('@replit/database');
+//const Database = require('@replit/database');
+//const db = new Database();
 const keep_alive = require('./keep_alive.js');
 
 
@@ -57,31 +58,31 @@ function getRndInteger(min, max) {
 
 
 class RedditBot{
+	response_list = [];
     constructor(filename){
-        this.response_list = [];
-
-        //if (db.length == 0){
-            fs.createReadStream('response_list.csv')
-                .pipe(csv(['phrase', 'reply1', 'reply2', 'reply3', 'reply4']))
-                .on('data', (data) => this.response_list.push(data))
-                .on('end', () => {
-                    console.log(this.response_list);
-                });
-        //  db['response_list'] = this.response_list;
+        //if (!db.length){
+			this.response_list.push(new Promise((res) => {
+        		fs.createReadStream('response_list.csv')
+          			.pipe(csv(['phrase', 'reply1', 'reply2', 'reply3', 'reply4']))
+          			.on('data', (data) => {
+            			//return(data);
+          			})
+      		}))
         //} else{
         //    console.log("Pulling from DB");
         //    this.response_list = db['response_list'];
         //}
     }
-    find_match(comment){
-        for (var i=0;i<this.response_list;i++) {
+    async findMatch() {
+    	for(let i = 0; i < this.responseList.length; i++) {
+            console.log(i)
             if (clean_string(comment.body).includes(this.response_list[i]['phrase'])){
                 if (this.cooled_down(i)){
                     this.make_reply(i, comment);
                 }
             }
-        }
-    }
+    	}
+  	}
     
     cooled_down(i){
         dictionary = this.response_list[i]

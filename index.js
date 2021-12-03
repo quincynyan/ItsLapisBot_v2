@@ -65,7 +65,7 @@ class RedditBot{
         		fs.createReadStream('response_list.csv')
           			.pipe(csv(['phrase', 'reply1', 'reply2', 'reply3', 'reply4']))
           			.on('data', (data) => {
-            			//return(data);
+            			return(data);
           			})
       		}))
         //} else{

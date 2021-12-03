@@ -58,7 +58,7 @@ function getRndInteger(min, max) {
 
 class RedditBot{
     constructor(filename){
-        this.response_list = []
+        this.response_list = [];
 
         //if (db.length == 0){
             fs.createReadStream('response_list.csv')
@@ -67,19 +67,20 @@ class RedditBot{
                 .on('end', () => {
                     console.log(this.response_list);
                 });
-        //  db['response_list'] = this.response_list
+        //  db['response_list'] = this.response_list;
         //} else{
-        //    console.log("Pulling from DB")
-        //    this.response_list = db['response_list']
+        //    console.log("Pulling from DB");
+        //    this.response_list = db['response_list'];
         //}
     }
     find_match(comment){
-        for (i=0;i<this.response_list;i++)
+        for (var i=0;i<this.response_list;i++) {
             if (clean_string(comment.body).includes(this.response_list[i]['phrase'])){
                 if (this.cooled_down(i)){
                     this.make_reply(i, comment);
                 }
             }
+        }
     }
     
     cooled_down(i){
@@ -106,8 +107,8 @@ class RedditBot{
         try{
             setTimeout(function(){
                 x = getRndInteger(1, 4);
-                comment.reply(dictionary['reply'+x])
-                console.log(comment.body)
+                comment.reply(dictionary['reply'+x]);
+                console.log(comment.body);
                 console.log(dictionary['phrase'])
                 console.log(dictionary['reply'+x])
             }, 60 * 60 * 3);
@@ -125,12 +126,10 @@ class RedditBot{
 // Warning clears all your posted times!
 // Use if you want to changes phrases replies
 //db.clear()
-keep_alive()
+keep_alive();
 bot = new RedditBot("response_list.csv");
-subreddit = r.getSubreddit("all");
-for (i=0;i<subreddit.getNewComments();i++){
+/*for (i=0;i<subreddit.getNewComments();i++){
     bot.find_match(comment);
-}
-
-
+}*/
+r.getSubreddit('test').getNewComments().then(bot.find_match);
 

@@ -58,8 +58,8 @@ function getRndInteger(min, max) {
 
 
 class RedditBot{
-	response_list = [];
     constructor(filename){
+        this.response_list = [];
         //if (!db.length){
 			this.response_list.push(new Promise((res) => {
         		fs.createReadStream('response_list.csv')
@@ -74,7 +74,7 @@ class RedditBot{
         //}
     }
     async findMatch() {
-    	for(let i = 0; i < this.responseList.length; i++) {
+    	for(let i = 0; i < this.response_list.length; i++) {
             console.log(i)
             if (clean_string(comment.body).includes(this.response_list[i]['phrase'])){
                 if (this.cooled_down(i)){
@@ -132,5 +132,5 @@ bot = new RedditBot("response_list.csv");
 /*for (i=0;i<subreddit.getNewComments();i++){
     bot.find_match(comment);
 }*/
-r.getSubreddit('test').getNewComments().then(bot.find_match);
+r.getSubreddit('test').getNewComments().then(bot.findMatch);
 

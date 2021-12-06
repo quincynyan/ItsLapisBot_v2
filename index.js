@@ -68,6 +68,7 @@ class RedditBot{
             			return(data);
           			})
       		}))
+        //  db['response_list'] = this.response_list
         //} else{
         //    console.log("Pulling from DB");
         //    this.response_list = db['response_list'];

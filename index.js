@@ -62,20 +62,28 @@ class RedditBot{
 	constructor(filename){
 		this.response_list = [];
 		//if (!db.length){
-			this.response_list.push(new Promise((res) => {
-				fs.createReadStream('response_list.csv')
-		  			.pipe(csv(['phrase', 'reply1', 'reply2', 'reply3', 'reply4']))
-		  			.on('data', (data) => {
-						return(data);
-		  			})
-	  		}))
+			this.csvToArray(filename);
 		//  db['response_list'] = this.response_list
 		//} else{
 		//    console.log("Pulling from DB");
 		//    this.response_list = db['response_list'];
 		//}
 	}
-	async findMatch() {
+	csvToArray(filename){
+		return new Promise((res) => {
+			fs.createReadStream(filename)
+				.pipe(csv(['phrase', 'reply1', 'reply2', 'reply3', 'reply4']))
+				.on('data', (data) => {
+					res(data);
+					this.response_list.push(data);
+				})
+				.on('end', (data) => {
+					console.log(JSON.stringify(this.response_list));
+					startBot()
+				  });
+		});
+	}
+	async findMatch(comment) {
 		for(let i = 0; i < this.response_list.length; i++) {
 			console.log(i)
 			if (clean_string(comment.body).includes(this.response_list[i]['phrase'])){
@@ -131,9 +139,11 @@ class RedditBot{
 //db.clear()
 keep_alive();
 bot = new RedditBot("response_list.csv");
-const comments = new snoostorm.CommentStream(r, {
-	subreddit: "test",
-	limit: 10,
-	pollTime: 2000,
-});
-comments.on("item", console.log);
+function startBot(){
+	const comments = new snoostorm.CommentStream(r, {
+		subreddit: "test",
+		limit: 10,
+		pollTime: 2000,
+	});
+	comments.on("comment", function(item) {bot.findMatch(comment)});
+}

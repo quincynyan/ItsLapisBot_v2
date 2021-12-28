@@ -100,14 +100,14 @@ class RedditBot {
 
 	cooled_down(i) {
 		var dictionary = this.response_list[i];
-		console.log("cooled_down" + this.response_list[i]);
-		if (!dictionary.keys().includes("last_posted")) {
+		console.log("cooled_down" + this.response_list[i].toString());
+		if (!Object.keys(dictionary).includes("last_posted")) {
 			// Means we have never posted on this phrase!
-			return True;
+			return true;
 		} else {
-			now = datetime.now();
-			duration = now - datetime.fromtimestamp(dictionary["last_posted"]);
-			duration_seconds = duration.total_seconds();
+			now = new Date();
+			duration = now - dictionary["last_posted"];
+			duration_seconds = duration.getTime() / 1000;
 			hours = divmod(duration_seconds, 3600)[0];
 			if (hours >= 24) {
 				return True;
@@ -125,10 +125,10 @@ class RedditBot {
 	}
 
 	make_reply(i, comment) {
-		dictionary = this.response_list[i];
+		var dictionary = this.response_list[i];
 		try {
 			setTimeout(function () {
-				x = getRndInteger(1, 4);
+				var x = getRndInteger(1, 4);
 				comment.reply(dictionary["reply" + x]);
 				console.log(comment.body);
 				console.log(dictionary["phrase"]);
@@ -139,8 +139,8 @@ class RedditBot {
 			console.log(e);
 		}
 
-		now = datetime.now();
-		this.response_list[i]["last_posted"] = now.timestamp();
+		var now = new Date();
+		this.response_list[i]["last_posted"] = now;
 		//db['response_list'] = this.response_list;
 	}
 }

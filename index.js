@@ -35,7 +35,7 @@ function clean_string(raw_string) {
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890".split(
 			""
 		);
-	cleaned_string = raw_string.toLowerCase();
+	var cleaned_string = raw_string.toLowerCase();
 	for (i = 0; i < cleaned_string.length; i++) {
 		if (!A.includes(cleaned_string[i])) {
 			cleaned_string = setCharAt(cleaned_string, i, " ");
@@ -54,6 +54,8 @@ function setCharAt(str, index, chr) {
 function getRndInteger(min, max) {
 	return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+const divmod = (x, y) => [Math.floor(x / y), x % y];
 
 class RedditBot {
 	constructor(filename) {
@@ -75,7 +77,7 @@ class RedditBot {
 					this.response_list.push(data);
 				})
 				.on("end", (data) => {
-					console.log(JSON.stringify(this.response_list));
+					////	console.log(JSON.stringify(this.response_list));	\\\\
 					startBot();
 				});
 		});
@@ -85,8 +87,8 @@ class RedditBot {
 		for (let i = 0; i < this.response_list.length; i++) {
 			console.log(i);
 			if (
-				this.response_list[i]["phrase"].includes(
-					clean_string(comment.body)
+				clean_string(comment.body).includes(
+					clean_string(this.response_list[i]["phrase"])
 				)
 			) {
 				console.log("match found!");
@@ -105,12 +107,12 @@ class RedditBot {
 			// Means we have never posted on this phrase!
 			return true;
 		} else {
-			now = new Date();
-			duration = now - dictionary["last_posted"];
-			duration_seconds = duration.getTime() / 1000;
-			hours = divmod(duration_seconds, 3600)[0];
+			var now = new Date();
+			var duration = new Date(now) - new Date(dictionary["last_posted"]);
+			var duration_seconds = new Date(duration).getTime() / 1000;
+			var hours = divmod(duration_seconds, 3600)[0];
 			if (hours >= 24) {
-				return True;
+				return true;
 			} else {
 				console.log(
 					"Couldn't post " +
@@ -121,7 +123,7 @@ class RedditBot {
 				);
 			}
 		}
-		return False;
+		return false;
 	}
 
 	make_reply(i, comment) {
@@ -130,9 +132,9 @@ class RedditBot {
 			setTimeout(function () {
 				var x = getRndInteger(1, 4);
 				comment.reply(dictionary["reply" + x]);
-				console.log(comment.body);
-				console.log(dictionary["phrase"]);
-				console.log(dictionary["reply" + x]);
+				console.log("replying to: " + comment.body);
+				console.log("found this: " + dictionary["phrase"]);
+				console.log("replying with: " + dictionary["reply" + x]);
 			}, 60 * 60 * 3);
 			// Might want to sleep after posting!
 		} catch (e) {

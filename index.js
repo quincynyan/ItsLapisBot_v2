@@ -104,6 +104,7 @@ class RedditBot {
 					this.make_reply(i, comment);
 					break;
 				}
+				break;
 			}
 		}
 	}

@@ -15,6 +15,8 @@ const keep_alive = require("./keep_alive.js");
 
 const nodeModulesPath = path.join(__dirname, "node_modules");
 
+var sleeping = false;
+
 function installDeps() {
 	console.log("Installing dependencies, please wait...");
 	execSync("npm install --only=prod", {
@@ -58,7 +60,9 @@ function getRndInteger(min, max) {
 const divmod = (x, y) => [Math.floor(x / y), x % y];
 
 function sleep(ms) {
-	return new Promise((resolve) => setTimeout(resolve, ms));
+	setTimeout(function () {
+		sleeping = false;
+	}, ms);
 }
 
 class RedditBot {
@@ -134,7 +138,7 @@ class RedditBot {
 		return false;
 	}
 
-	async make_reply(i, comment) {
+	make_reply(i, comment) {
 		var dictionary = this.response_list[i];
 		try {
 			var x = getRndInteger(1, 4);
@@ -143,7 +147,8 @@ class RedditBot {
 			console.log("found this: " + dictionary["phrase"]);
 			console.log("replying with: " + dictionary["reply" + x]);
 			// Might want to sleep after posting!
-			await sleep(60 * 60 * 3);
+			sleeping = true;
+			sleep(60 * 60 * 3);
 		} catch (e) {
 			console.log(e);
 		}
@@ -170,7 +175,9 @@ function startBot() {
 	comments.on("item", function (item) {
 		console.log("================================");
 		console.log(item.body);
-		bot.findMatch(item);
+		if (!sleeping) {
+			bot.findMatch(item);
+		}
 		console.log("================================");
 	});
 }

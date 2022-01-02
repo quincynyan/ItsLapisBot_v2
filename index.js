@@ -168,7 +168,7 @@ console.log("creating bot done");
 function startBot() {
 	console.log("starting bot");
 	const comments = new snoostorm.CommentStream(r, {
-		subreddit: "test",
+		subreddit: "BeachCity+memeuniverse+stevenuniverse+stevenuniversejerk+SULeaks",
 		limit: 10,
 		pollTime: 2000,
 	});

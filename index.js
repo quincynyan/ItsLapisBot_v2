@@ -57,6 +57,10 @@ function getRndInteger(min, max) {
 
 const divmod = (x, y) => [Math.floor(x / y), x % y];
 
+function sleep(ms) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 class RedditBot {
 	constructor(filename) {
 		this.response_list = [];
@@ -83,6 +87,9 @@ class RedditBot {
 		});
 	}
 	async findMatch(comment) {
+		if (comment.author.name == "ItsLapisBot_v2") {
+			return;
+		}
 		console.log("finding match");
 		for (let i = 0; i < this.response_list.length; i++) {
 			console.log(i);
@@ -95,6 +102,7 @@ class RedditBot {
 				if (this.cooled_down(i)) {
 					console.log("no cool down! starting to make reply!");
 					this.make_reply(i, comment);
+					break;
 				}
 			}
 		}
@@ -102,7 +110,7 @@ class RedditBot {
 
 	cooled_down(i) {
 		var dictionary = this.response_list[i];
-		console.log("cooled_down" + this.response_list[i].toString());
+		console.log("cooled_down" + JSON.stringify(this.response_list[i]));
 		if (!Object.keys(dictionary).includes("last_posted")) {
 			// Means we have never posted on this phrase!
 			return true;
@@ -118,25 +126,23 @@ class RedditBot {
 					"Couldn't post " +
 						dictionary["phrase"] +
 						"Cool Down time: " +
-						24 -
-						hours
+						(24 - hours)
 				);
 			}
 		}
 		return false;
 	}
 
-	make_reply(i, comment) {
+	async make_reply(i, comment) {
 		var dictionary = this.response_list[i];
 		try {
-			setTimeout(function () {
-				var x = getRndInteger(1, 4);
-				comment.reply(dictionary["reply" + x]);
-				console.log("replying to: " + comment.body);
-				console.log("found this: " + dictionary["phrase"]);
-				console.log("replying with: " + dictionary["reply" + x]);
-			}, 60 * 60 * 3);
+			var x = getRndInteger(1, 4);
+			comment.reply(dictionary["reply" + x]);
+			console.log("replying to: " + comment.body);
+			console.log("found this: " + dictionary["phrase"]);
+			console.log("replying with: " + dictionary["reply" + x]);
 			// Might want to sleep after posting!
+			await sleep(60 * 60 * 3);
 		} catch (e) {
 			console.log(e);
 		}
@@ -161,8 +167,9 @@ function startBot() {
 		pollTime: 2000,
 	});
 	comments.on("item", function (item) {
-		bot.findMatch(item);
+		console.log("================================");
 		console.log(item.body);
+		bot.findMatch(item);
 		console.log("================================");
 	});
 }

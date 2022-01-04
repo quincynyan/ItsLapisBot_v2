@@ -91,7 +91,7 @@ class RedditBot {
 		});
 	}
 	async findMatch(comment) {
-		if (comment.author.name == "ItsLapisBot_v2") {
+		if (comment.author.name == "ItsLapisBot_v2" || comment.author.name == "sneakpeekbot") {
 			return;
 		}
 		console.log("finding match");

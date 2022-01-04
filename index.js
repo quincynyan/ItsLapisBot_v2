@@ -148,7 +148,7 @@ class RedditBot {
 			console.log("replying with: " + dictionary["reply" + x]);
 			// Might want to sleep after posting!
 			sleeping = true;
-			sleep(60 * 60 * 3);
+			sleep(60 * 60 * 3 * 1000);
 		} catch (e) {
 			console.log(e);
 		}

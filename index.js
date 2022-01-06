@@ -32,7 +32,7 @@ if (!fs.existsSync(nodeModulesPath)) {
 	//return;
 }
 
-function clean_string(raw_string) {
+function clean_string(input) {
 	return input
 		.toLowerCase()
 		.replace(/([^a-z\d\s]+)/g, " ")

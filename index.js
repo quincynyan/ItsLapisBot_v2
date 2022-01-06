@@ -33,24 +33,10 @@ if (!fs.existsSync(nodeModulesPath)) {
 }
 
 function clean_string(raw_string) {
-	A =
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz 1234567890".split(
-			""
-		);
-	var cleaned_string = raw_string.toLowerCase();
-	for (i = 0; i < cleaned_string.length; i++) {
-		if (!A.includes(cleaned_string[i])) {
-			cleaned_string = setCharAt(cleaned_string, i, " ");
-		}
-	}
-	cleaned_string = cleaned_string.replace(/\s\s+/g, " ");
-
-	return cleaned_string;
-}
-
-function setCharAt(str, index, chr) {
-	if (index > str.length - 1) return str;
-	return str.substring(0, index) + chr + str.substring(index + 1);
+	return input
+		.toLowerCase()
+		.replace(/([^a-z\d\s]+)/g, " ")
+		.replace(/(\s+)/g, " ");
 }
 
 function getRndInteger(min, max) {
@@ -91,7 +77,10 @@ class RedditBot {
 		});
 	}
 	async findMatch(comment) {
-		if (comment.author.name == "ItsLapisBot_v2" || comment.author.name == "sneakpeekbot") {
+		if (
+			comment.author.name == "ItsLapisBot_v2" ||
+			comment.author.name == "sneakpeekbot"
+		) {
 			return;
 		}
 		console.log("finding match");
@@ -168,7 +157,8 @@ console.log("creating bot done");
 function startBot() {
 	console.log("starting bot");
 	const comments = new snoostorm.CommentStream(r, {
-		subreddit: "BeachCity+memeuniverse+stevenuniverse+stevenuniversejerk+SULeaks",
+		subreddit:
+			"BeachCity+memeuniverse+stevenuniverse+stevenuniversejerk+SULeaks",
 		limit: 10,
 		pollTime: 2000,
 	});
